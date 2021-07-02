@@ -1,7 +1,7 @@
 package handlers;
 
 import exceptions.ElementTypeException;
-import parser.JSONParser;
+import exceptions.JsonSerializationException;
 
 public interface ElementHandler {
     /**
@@ -9,7 +9,9 @@ public interface ElementHandler {
      *
      * @return the value for the JSON Object
      */
-    String handle(Object o) throws ElementTypeException, JSONParser.JsonSerializationException, ElementTypeException, JSONParser.JsonSerializationException;
+    String handle(Object o) throws ElementTypeException, JsonSerializationException;
 
     String getType();
+
+    boolean canHandle(Object o);
 }

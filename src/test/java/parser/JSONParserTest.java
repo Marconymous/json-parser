@@ -1,12 +1,11 @@
 package parser;
 
-import annotations.JsonElement;
+import annotations.JsonField;
 import annotations.JsonSerializableObject;
 import enums.JSONType;
+import exceptions.JsonSerializationException;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,7 +19,7 @@ class JSONParserTest {
         String s = null;
         try {
             s = parser.objectToJSON(address);
-        } catch (JSONParser.JsonSerializationException e) {
+        } catch (JsonSerializationException e) {
             e.printStackTrace();
         }
 
@@ -37,7 +36,7 @@ class JSONParserTest {
         String s = null;
         try {
             s = parser.listToJSON(persons, Person.class);
-        } catch (JSONParser.JsonSerializationException e) {
+        } catch (JsonSerializationException e) {
             e.printStackTrace();
         }
 
@@ -45,13 +44,13 @@ class JSONParserTest {
     }
 
     @JsonSerializableObject(listName = "persons")
-    private record Person(@JsonElement(type = JSONType.STRING) String name,
-                          @JsonElement(type = JSONType.INTEGER) long age) {
+    private record Person(@JsonField(type = JSONType.STRING) String name,
+                          @JsonField(type = JSONType.INTEGER) long age) {
     }
 
     @JsonSerializableObject(listName = "addresses")
-    private record Address(@JsonElement(type = JSONType.JSON_ANNOTATED) Person person,
-                           @JsonElement(type = JSONType.STRING) String address) {
+    private record Address(@JsonField(type = JSONType.JSON_ANNOTATED) Person person,
+                           @JsonField(type = JSONType.STRING) String address) {
 
     }
 }
