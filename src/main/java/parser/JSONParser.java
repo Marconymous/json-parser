@@ -1,13 +1,14 @@
 package parser;
 
-import annotations.JsonField;
-import annotations.JsonMethod;
-import annotations.JsonSerializableObject;
-import enums.JSONType;
+import parser.annotations.JsonField;
+import parser.annotations.JsonMethod;
+import parser.annotations.JsonSerializableObject;
+import parser.enums.JSONType;
+import parser.enums.ParserResponseType;
 import exceptions.ElementTypeException;
 import exceptions.JsonSerializationException;
-import handlers.DefaultHandlers;
-import handlers.ElementHandler;
+import parser.handlers.DefaultHandlers;
+import parser.handlers.ElementHandler;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -50,9 +51,9 @@ public class JSONParser {
     }
 
     /**
-     * Constructor to set the list of handlers to your own
+     * Constructor to set the list of parser.handlers to your own
      *
-     * @param handlers the list of handlers
+     * @param handlers the list of parser.handlers
      */
     public JSONParser(Map<String, ElementHandler> handlers) {
         this.handlers = handlers;
@@ -61,7 +62,7 @@ public class JSONParser {
     /**
      * Adds one or multiple Handlers to a list
      *
-     * @param handlers the list of handlers
+     * @param handlers the list of parser.handlers
      */
     public void addHandler(ElementHandler... handlers) {
         for (ElementHandler handler : handlers)
@@ -72,6 +73,7 @@ public class JSONParser {
      * Checks if an object is Serializable
      *
      * @param object the object to check
+     *
      * @throws JsonSerializationException if the Object cannot be serialized
      */
     private void checkIfSerializable(Object object) throws JsonSerializationException {
@@ -82,7 +84,7 @@ public class JSONParser {
             throw new JsonSerializationException("The class " + clazz.getName() + " is not annotated with JsonSerializableObject");
         }
     }
-    
+
     private String getJsonString(Object object) throws JsonSerializationException, IllegalAccessException, ElementTypeException, InvocationTargetException, exceptions.JsonSerializationException {
         // Get class of object
         Class<?> clazz = object.getClass();
@@ -168,11 +170,25 @@ public class JSONParser {
         }
     }
 
-    public String listToJSON(List<?> list, Class<?> clazz, boolean includeTitle) throws JsonSerializationException {
+    public String listToJSON(List<?> list, Class<?> clazz, ParserResponseType response) throws JsonSerializationException {
         if (!clazz.isAnnotationPresent(JsonSerializableObject.class))
             throw new JsonSerializationException("The Type " + clazz.getName() + " is not annotated with " + JsonSerializableObject.class.getName());
         try {
-            StringBuilder sb = new StringBuilder(((includeTitle) ? "{\"" + clazz.getAnnotation(JsonSerializableObject.class).listName() + "\":" : "") + "[");
+            StringBuilder sb = new StringBuilder();
+            String listName = clazz.getAnnotation(JsonSerializableObject.class).listName();
+
+            switch (response) {
+                case LIST:
+                    break;
+                case KEY_VALUE_PAIR:
+                    sb.append("\"").append(listName).append("\":");
+                    break;
+                case OBJECT_LIST:
+                    sb.append("{\"").append(listName).append("\":");
+                    break;
+            }
+            sb.append("[");
+
             Iterator<?> iter = list.iterator();
             while (iter.hasNext()) {
                 Object o = iter.next();
@@ -180,11 +196,22 @@ public class JSONParser {
 
                 if (iter.hasNext()) sb.append(",");
             }
-            sb.append("]").append((includeTitle) ? "}" : "");
+
+            sb.append("]");
+            switch (response) {
+                case LIST:
+                case KEY_VALUE_PAIR:
+                    break;
+                case OBJECT_LIST:
+                    sb.append("}");
+                    break;
+            }
 
             return sb.toString();
         } catch (Exception e) {
             throw new JsonSerializationException(e.getMessage());
         }
     }
+
+
 }

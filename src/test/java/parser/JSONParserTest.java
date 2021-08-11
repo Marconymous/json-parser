@@ -1,9 +1,12 @@
 package parser;
 
-import annotations.JsonField;
-import annotations.JsonSerializableObject;
-import enums.JSONType;
+import parser.annotations.JsonField;
+import parser.annotations.JsonSerializableObject;
+import parser.enums.JSONType;
+import parser.enums.ParserResponseType;
 import exceptions.JsonSerializationException;
+import formatter.JSONFormatter;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +26,7 @@ class JSONParserTest {
             e.printStackTrace();
         }
 
-        assertEquals("{\"person\":{\"name\":\"Marck der Nyme\",\"age\":69},\"address\":\"Kerberstrasse 420\"}", s);
+        assertEquals("{\"address\":\"Kerberstrasse 420\",\"person\":{\"name\":\"Marck der Nyme\",\"age\":69}}", s);
     }
 
     @org.junit.jupiter.api.Test
@@ -35,12 +38,25 @@ class JSONParserTest {
         JSONParser parser = new JSONParser();
         String s = null;
         try {
-            s = parser.listToJSON(persons, Person.class);
+            s = parser.listToJSON(persons, Person.class, ParserResponseType.OBJECT_LIST);
         } catch (JsonSerializationException e) {
             e.printStackTrace();
         }
 
-        assertEquals("\"persons\":[{\"name\":\"Marc Andri Fuchs\",\"age\":16},{\"name\":\"Tim Jan Irmler\",\"age\":18}]", s);
+        System.out.println(JSONFormatter.format(s));
+
+        assertEquals("{\"persons\":[{\"name\":\"Marc Andri Fuchs\",\"age\":16},{\"name\":\"Tim Jan Irmler\",\"age\":18}]}", s);
+    }
+
+    @Test
+    void format() {
+        JSONParser parser = new JSONParser();
+        try {
+            String json = parser.objectToJSON(new Person("Marc[] Andri, Fuchs{}", 16));
+            System.out.println(JSONFormatter.format(json));
+        } catch (JsonSerializationException e) {
+            e.printStackTrace();
+        }
     }
 
     @JsonSerializableObject(listName = "persons")
@@ -51,6 +67,5 @@ class JSONParserTest {
     @JsonSerializableObject(listName = "addresses")
     private record Address(@JsonField(type = JSONType.JSON_ANNOTATED) Person person,
                            @JsonField(type = JSONType.STRING) String address) {
-
     }
 }

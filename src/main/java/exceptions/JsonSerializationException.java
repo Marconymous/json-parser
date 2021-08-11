@@ -1,7 +1,7 @@
 package exceptions;
 
-import handlers.DefaultHandlers;
-import handlers.ElementHandler;
+import parser.handlers.DefaultHandlers;
+import parser.handlers.ElementHandler;
 
 import java.util.Map;
 

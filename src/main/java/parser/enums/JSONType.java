@@ -1,4 +1,4 @@
-package enums;
+package parser.enums;
 
 public enum JSONType {
     FLOAT,

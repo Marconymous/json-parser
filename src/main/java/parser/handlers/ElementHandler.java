@@ -1,4 +1,4 @@
-package handlers;
+package parser.handlers;
 
 import exceptions.ElementTypeException;
 import exceptions.JsonSerializationException;

@@ -1,7 +1,7 @@
-package handlers;
+package parser.handlers;
 
-import annotations.JsonSerializableObject;
-import enums.JSONType;
+import parser.annotations.JsonSerializableObject;
+import parser.enums.JSONType;
 import exceptions.ElementTypeException;
 import exceptions.JsonSerializationException;
 import parser.JSONParser;
@@ -10,7 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Default handlers for datatypes in JSON
+ * Default parser.handlers for datatypes in JSON
  */
 public class DefaultHandlers {
     /**
